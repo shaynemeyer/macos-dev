@@ -1,8 +1,9 @@
 # Complete Guide to macOS APIs
 
-*A comprehensive reference for macOS developers - January 2026*
+_A comprehensive reference for macOS developers - January 2026_
 
 ## Table of Contents
+
 1. [macOS API Ecosystem Overview](#macos-api-ecosystem-overview)
 2. [Application Types & Framework Usage](#application-types--framework-usage)
 3. [Framework Layers - Deep Dive](#framework-layers---deep-dive)
@@ -78,9 +79,11 @@
 ## Application Types & Framework Usage
 
 ### 1. Simple Utility App
+
 **Examples:** Calculator, To-Do List, Note-taking app
 
 **Primary Frameworks:**
+
 - SwiftUI - Main UI framework
 - Foundation - Data handling
 - UserDefaults - Settings storage
@@ -89,9 +92,11 @@
 **Why this stack:** Simple utilities benefit from SwiftUI's rapid development and clean declarative syntax.
 
 ### 2. Media Application
+
 **Examples:** Video Editor, Music Player, Audio Workstation
 
 **Primary Frameworks:**
+
 - AppKit - Complex UI controls (timelines, precision editing)
 - AVFoundation - Video/audio playback, recording, editing
 - Metal - GPU acceleration for real-time effects
@@ -101,9 +106,11 @@
 **Why this stack:** Media apps need precise control over playback, frame-accurate editing, and real-time performance.
 
 ### 3. Professional Creative App
+
 **Examples:** Photo Editor, Design Tool, Illustration Software
 
 **Primary Frameworks:**
+
 - AppKit - Precise UI controls, custom tools
 - Metal - Real-time rendering and GPU compute
 - Core Graphics - Vector drawing
@@ -114,9 +121,11 @@
 **Why this stack:** Creative professionals demand pixel-perfect precision, non-destructive editing, and professional color accuracy.
 
 ### 4. Network Application
+
 **Examples:** Chat Client, Web Browser, Cloud Sync Tool
 
 **Primary Frameworks:**
+
 - SwiftUI - Modern, reactive UI
 - Network Framework - Low-level networking, custom protocols
 - URLSession - HTTP/HTTPS requests
@@ -128,9 +137,11 @@
 **Why this stack:** Network apps need to handle asynchronous events elegantly and keep users informed.
 
 ### 5. System Utility
+
 **Examples:** Menu Bar App, System Monitor, Disk Utility
 
 **Primary Frameworks:**
+
 - AppKit - Menu bar integration, system UI
 - IOKit - Direct hardware access
 - SystemConfiguration - Network and system settings
@@ -140,9 +151,11 @@
 **Why this stack:** System utilities need deep integration with macOS internals.
 
 ### 6. Game
+
 **Examples:** 3D Games, 2D Platformers, Puzzle Games
 
 **Primary Frameworks:**
+
 - Metal - High-performance graphics rendering
 - GameController - Controller input handling
 - MetalKit - Simplified Metal rendering setup
@@ -159,6 +172,7 @@
 ### Layer 1: Foundation - The Bedrock
 
 **What it provides:**
+
 - Data Types: NSString, NSArray, NSDictionary, NSDate, NSData
 - Collections: Set, Dictionary, Array with Swift integration
 - File System: FileManager for reading/writing files
@@ -170,6 +184,7 @@
 **Why it matters:** Every macOS app uses Foundation. It's the glue that connects high-level frameworks to low-level system services.
 
 **Example:**
+
 ```swift
 // Reading a file
 let fileManager = FileManager.default
@@ -192,12 +207,14 @@ UserDefaults.standard.set(true, forKey: "darkMode")
 #### AppKit (Traditional)
 
 **When to use:**
+
 - Complex custom controls
 - Document-based applications
 - Fine-grained UI control
 - Apps targeting older macOS versions
 
 **Key components:**
+
 - NSWindow - Window management
 - NSView - Custom drawing, layout
 - NSViewController - MVC architecture
@@ -206,16 +223,17 @@ UserDefaults.standard.set(true, forKey: "darkMode")
 - NSToolbar - Customizable toolbars
 
 **Example:**
+
 ```swift
 class MyViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
-        let button = NSButton(title: "Click Me", 
-                            target: self, 
+        let button = NSButton(title: "Click Me",
+                            target: self,
                             action: #selector(buttonClicked))
         view.addSubview(button)
     }
-    
+
     @objc func buttonClicked(_ sender: NSButton) {
         print("Clicked!")
     }
@@ -225,18 +243,21 @@ class MyViewController: NSViewController {
 #### SwiftUI (Modern)
 
 **When to use:**
+
 - New applications
 - Rapid prototyping
 - Cross-platform apps
 - Standard UI needs
 
 **Key concepts:**
+
 - Declarative syntax
 - State-driven UI updates
 - Compositional views
 - Live preview
 
 **Property wrappers:**
+
 - @State - View-local state
 - @Binding - Two-way connection
 - @ObservedObject - External observable
@@ -244,10 +265,11 @@ class MyViewController: NSViewController {
 - @EnvironmentObject - Shared object
 
 **Example:**
+
 ```swift
 struct ContentView: View {
     @State private var count = 0
-    
+
     var body: some View {
         VStack {
             Text("Count: \(count)")
@@ -268,6 +290,7 @@ struct ContentView: View {
 **Purpose:** Low-level 2D drawing
 
 **Capabilities:**
+
 - Path-based drawing
 - PDF creation/rendering
 - Color management
@@ -281,6 +304,7 @@ struct ContentView: View {
 **Purpose:** Direct GPU access
 
 **Capabilities:**
+
 - 3D graphics rendering
 - GPU compute
 - Machine learning acceleration
@@ -290,6 +314,7 @@ struct ContentView: View {
 **When to use:** Games, video editing, scientific computing, ML inference
 
 **Key concepts:**
+
 - MTLDevice - GPU representation
 - MTLCommandQueue - Command execution
 - MTLCommandBuffer - Encoded commands
@@ -300,6 +325,7 @@ struct ContentView: View {
 **Purpose:** Audio and video
 
 **Capabilities:**
+
 - Media playback
 - Video capture
 - Audio recording
@@ -308,6 +334,7 @@ struct ContentView: View {
 - Streaming
 
 **Common classes:**
+
 - AVPlayer - Playback
 - AVAsset - Media files
 - AVComposition - Editing timeline
@@ -322,6 +349,7 @@ struct ContentView: View {
 **Purpose:** Object graph and persistence
 
 **What it does:**
+
 - Object-relational mapping
 - Automatic change tracking
 - Undo/redo support
@@ -330,12 +358,14 @@ struct ContentView: View {
 - Cloud synchronization
 
 **When to use:**
+
 - Complex data models
 - Document-based apps
 - Offline storage
 - Apps requiring undo/redo
 
 **Key concepts:**
+
 - Entities - Object types
 - Attributes - Properties
 - Relationships - Object connections
@@ -348,6 +378,7 @@ struct ContentView: View {
 **Purpose:** Reactive programming
 
 **What it does:**
+
 - Handle async events
 - Chain operations
 - Error handling
@@ -356,12 +387,14 @@ struct ContentView: View {
 - Cancellation
 
 **Key types:**
+
 - Publisher - Emits values
 - Subscriber - Receives values
 - Subject - Publishes and subscribes
 - AnyCancellable - Subscription management
 
 **Common operators:**
+
 - map, filter, debounce, combineLatest, flatMap, catch, retry
 
 ---
@@ -373,6 +406,7 @@ struct ContentView: View {
 **Purpose:** Modern networking
 
 **Capabilities:**
+
 - TCP/UDP connections
 - TLS encryption
 - WebSocket
@@ -387,6 +421,7 @@ struct ContentView: View {
 **Purpose:** Cryptography and security
 
 **Capabilities:**
+
 - Keychain access
 - Certificate management
 - Encryption/decryption
@@ -401,6 +436,7 @@ struct ContentView: View {
 **Purpose:** File operations
 
 **Capabilities:**
+
 - Create/move/copy/delete files
 - Directory enumeration
 - File attributes
@@ -419,12 +455,14 @@ struct ContentView: View {
 **What it is:** Open-source Unix foundation of macOS
 
 **Components:**
+
 - BSD subsystem - POSIX APIs, networking, file systems
 - Mach kernel - Scheduling, IPC, memory
 - I/O Kit - Device drivers
 - libSystem - C standard library
 
 **Why it matters:**
+
 - Stability and security
 - POSIX compliance
 - Foundation for all frameworks
@@ -435,6 +473,7 @@ struct ContentView: View {
 **What it is:** Hybrid kernel combining Mach + BSD
 
 **Responsibilities:**
+
 - Process/thread management
 - Virtual memory
 - Inter-process communication
@@ -443,6 +482,7 @@ struct ContentView: View {
 - System calls
 
 **Why it matters:**
+
 - Determines system interaction
 - Affects threading performance
 - Controls resource access
@@ -455,6 +495,7 @@ struct ContentView: View {
 ### Example 1: Video Editor
 
 **Flow:**
+
 1. **UI** (AppKit) - Timeline, controls, preview
 2. **Media** (AVFoundation) - Load files, decode frames
 3. **Graphics** (Metal) - Render effects, color grading
@@ -467,6 +508,7 @@ struct ContentView: View {
 ### Example 2: Chat App
 
 **Flow:**
+
 1. **UI** (SwiftUI) - Message list, input field
 2. **Network** (URLSession/Network) - Send/receive messages
 3. **Security** (Keychain) - Store auth token
@@ -479,6 +521,7 @@ struct ContentView: View {
 ### Example 3: Photo Editor
 
 **Flow:**
+
 1. **UI** (AppKit + SwiftUI) - Canvas, tools, adjustments
 2. **Graphics** (Metal + Core Image) - Filter pipeline, rendering
 3. **File** (FileManager) - Open/export files
@@ -492,30 +535,37 @@ struct ContentView: View {
 ## Choosing Your Stack
 
 ### Simple Utility
+
 **Recommended:** SwiftUI + Foundation + UserDefaults
 **Examples:** Calculator, timer, notes
 
 ### Business App
+
 **Recommended:** AppKit/SwiftUI + Core Data + Combine
 **Examples:** Project management, CRM, accounting
 
 ### Media App
+
 **Recommended:** AppKit + AVFoundation + Metal
 **Examples:** Video editor, DAW, streaming
 
 ### Creative Tool
+
 **Recommended:** AppKit + Metal + Core Graphics + Core Image
 **Examples:** Photo editor, illustration, 3D modeling
 
 ### Network App
+
 **Recommended:** SwiftUI + URLSession/Network + Keychain + CloudKit
 **Examples:** Chat, social media, collaboration
 
 ### System Utility
+
 **Recommended:** AppKit + IOKit + SystemConfiguration
 **Examples:** System monitor, disk utility, network analyzer
 
 ### Game
+
 **Recommended:** Metal + MetalKit + GameplayKit
 **Examples:** 3D games, 2D platformers, puzzles
 
@@ -544,10 +594,10 @@ struct ContentView: View {
 
 ### Resources
 
-- Apple Developer Documentation: https://developer.apple.com/documentation/
-- Human Interface Guidelines: https://developer.apple.com/design/human-interface-guidelines/macos
-- SwiftUI Tutorials: https://developer.apple.com/tutorials/swiftui
-- WWDC Videos: https://developer.apple.com/videos/
+- Apple Developer Documentation: ,https://developer.apple.com/documentation/>
+- Human Interface Guidelines: <https://developer.apple.com/design/human-interface-guidelines/macos>
+- SwiftUI Tutorials: <https://developer.apple.com/tutorials/swiftui>
+- WWDC Videos: <https://developer.apple.com/videos/>
 
 ---
 
@@ -561,4 +611,4 @@ Don't try to learn everything at once. Start with the basics, build something re
 
 ---
 
-*Last updated: January 2026*
+_Last updated: January 2026_

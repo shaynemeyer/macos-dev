@@ -25,7 +25,25 @@ macOS is a layered operating system built on Darwin, an open-source Unix-like fo
 
 macOS follows a layered architecture where each layer builds upon lower layers:
 
-![macOS Architecture Layers](images/diagram1_architecture.png)
+```mermaid
+graph TD
+    A["User Experience Layer<br/><br/>Aqua • Spotlight • Quick Look • Accessibility"]
+    B["Application Frameworks<br/><br/>Cocoa (AppKit/UIKit) • SwiftUI • Catalyst"]
+    C["Application Services<br/><br/>Core Graphics • Core Animation • Core Text • AVFoundation"]
+    D["Core Services<br/><br/>Core Foundation • Core Data • Foundation • Security"]
+    E["Core OS (Darwin)<br/><br/>XNU Kernel • I/O Kit • BSD • Mach • libSystem"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+    style A fill:#e3f2fd,color:#000
+    style B fill:#bbdefb,color:#000
+    style C fill:#90caf9,color:#000
+    style D fill:#64b5f6,color:#000
+    style E fill:#42a5f5,color:#000
+```
 
 **Key Principle:** Higher layers provide abstraction and ease of use, while lower layers offer power and control. Choose the appropriate layer based on your application's needs.
 
@@ -67,7 +85,48 @@ Foundation provides essential data types, collections, and operating system serv
 
 macOS uses a Unix-based directory hierarchy with additional macOS-specific conventions.
 
-![macOS File System Structure](images/diagram5_filesystem.png)
+```mermaid
+graph TD
+    Root["/"]
+
+    Apps["/Applications<br/><em>Apps (.app)</em>"]
+    Sys["/System<br/><em>Frameworks<br/>CoreServices</em>"]
+    Lib["/Library<br/><em>Resources<br/>Preferences</em>"]
+    Users["/Users<br/><em>~/Desktop<br/>~/Documents<br/>~/Library</em>"]
+    Priv["/private<br/><em>/var<br/>/tmp</em>"]
+    Vol["/Volumes<br/><em>Mounted<br/>Disks</em>"]
+
+    Root --> Apps
+    Root --> Sys
+    Root --> Lib
+    Root --> Users
+    Root --> Priv
+    Root --> Vol
+
+    subgraph Bundle["App Bundle Structure"]
+        direction TB
+        AppBundle["MyApp.app/"]
+        Contents["Contents/"]
+        MacOS["MacOS/<br/><em>MyApp</em>"]
+        Resources["Resources/<br/><em>AppIcon.icns<br/>en.lproj/</em>"]
+        Frameworks["Frameworks/"]
+
+        AppBundle --> Contents
+        Contents --> MacOS
+        Contents --> Resources
+        Contents --> Frameworks
+    end
+
+    style Root fill:#42a5f5,color:#000
+    style Apps fill:#c8e6c9,color:#000
+    style Sys fill:#ffcdd2,color:#000
+    style Lib fill:#ffe0b2,color:#000
+    style Users fill:#bbdefb,color:#000
+    style Priv fill:#e1bee7,color:#000
+    style Vol fill:#b2ebf2,color:#000
+    style Bundle fill:#f5f5f5,stroke:#616161,stroke-width:2px,color:#000
+    style AppBundle fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px,color:#000
+```
 
 **Key Directories:**
 
@@ -80,7 +139,7 @@ macOS uses a Unix-based directory hierarchy with additional macOS-specific conve
 - **`/private/tmp`** - Temporary files cleared on reboot
 - **`/Volumes`** - Mounted filesystems and disk images
 
-**App Bundle Structure:**
+**App Bundle Structure (detailed):**
 
 ```text
 MyApp.app/
@@ -95,6 +154,8 @@ MyApp.app/
     PlugIns/            # App extensions
 ```
 
+The diagram above shows the basic bundle hierarchy; this expanded view includes additional files like `Info.plist` that are essential for app configuration.
+
 ---
 
 ## 4. Process and Memory Management
@@ -103,7 +164,46 @@ MyApp.app/
 
 macOS uses a hybrid process model combining Mach tasks with BSD processes.
 
-![macOS Process Model](images/diagram3_process.png)
+```mermaid
+graph LR
+    subgraph MachTask["Mach Task"]
+        direction TB
+        VAS["Virtual Address Space"]
+        subgraph BSDProc["BSD Process Layer"]
+            direction LR
+            T1["Thread 1<br/>Stack<br/>Registers"]
+            T2["Thread 2<br/>Stack<br/>Registers"]
+            T3["Thread 3<br/>Stack<br/>Registers"]
+            Info["PID • UID/GID • Signals • File Descriptors"]
+        end
+    end
+
+    subgraph IPC["Mach Ports (IPC)"]
+        P1((Port))
+        P2((Port))
+        P3((Port))
+    end
+
+    subgraph XPC["XPC Service"]
+        Helper["Helper Process<br/><br/><em>Sandboxed</em>"]
+    end
+
+    T3 -.IPC.-> P1
+    P1 --> Helper
+    Helper --> P3
+
+    style MachTask fill:#fce4ec,stroke:#c2185b,stroke-width:3px,stroke-dasharray: 5 5,color:#000
+    style BSDProc fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000
+    style T1 fill:#ffcdd2,color:#000
+    style T2 fill:#ffcdd2,color:#000
+    style T3 fill:#ffcdd2,color:#000
+    style IPC fill:#f3e5f5,color:#000
+    style P1 fill:#ce93d8,color:#000
+    style P2 fill:#ce93d8,color:#000
+    style P3 fill:#ce93d8,color:#000
+    style XPC fill:#e8f5e9,color:#000
+    style Helper fill:#c8e6c9,color:#000
+```
 
 | Concept         | Description                                                                              |
 | --------------- | ---------------------------------------------------------------------------------------- |
@@ -117,7 +217,38 @@ macOS uses a hybrid process model combining Mach tasks with BSD processes.
 
 macOS uses a sophisticated virtual memory system built on Mach VM.
 
-![Virtual Memory Layout](images/diagram4_memory.png)
+```mermaid
+graph TB
+    subgraph VM["Virtual Memory Layout"]
+        direction TB
+        K["Kernel Space<br/><br/><code>0xFFFFFFFF</code>"]
+        S["Stack<br/><br/><em>Grows Down ↓</em>"]
+        M["Memory Mapped Files<br/><br/><em>Shared Libs</em>"]
+        H["Heap<br/><br/><em>Grows Up ↑</em>"]
+        B["BSS Segment<br/><br/><em>Uninitialized Data</em>"]
+        D["Data Segment<br/><br/><em>Initialized Data</em>"]
+        T["Text Segment<br/><br/><em>Code (Read-Only)</em>"]
+        R["Reserved<br/><br/><code>0x00000000</code>"]
+    end
+
+    K --> S
+    S --> M
+    M --> H
+    H --> B
+    B --> D
+    D --> T
+    T --> R
+
+    style K fill:#ffcdd2,color:#000
+    style S fill:#e1bee7,color:#000
+    style M fill:#c5cae9,color:#000
+    style H fill:#b2dfdb,color:#000
+    style B fill:#fff9c4,color:#000
+    style D fill:#ffe0b2,color:#000
+    style T fill:#c8e6c9,color:#000
+    style R fill:#f5f5f5,color:#000
+    style VM fill:#fafafa,stroke:#616161,stroke-width:2px,color:#000
+```
 
 **Memory Regions:**
 
@@ -150,7 +281,25 @@ ARC is a compiler feature that automatically manages object lifetimes for Object
 
 ### 5.1 Graphics Stack Architecture
 
-![Graphics Stack](diagram2_graphics.png)
+```mermaid
+graph TD
+    A["AppKit / SwiftUI / UIKit<br/><br/>High-level UI Frameworks"]
+    B["Core Animation<br/><br/>Layer Composition & Animation"]
+    C["Core Graphics (Quartz 2D)<br/><br/>2D Rendering Engine"]
+    D["Metal / OpenGL (Legacy)<br/><br/>GPU Acceleration APIs"]
+    E["GPU Drivers & Hardware<br/><br/>Hardware Rendering"]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+
+    style A fill:#fff3e0,color:#000
+    style B fill:#ffe0b2,color:#000
+    style C fill:#ffcc80,color:#000
+    style D fill:#ffb74d,color:#000
+    style E fill:#ffa726,color:#000
+```
 
 The graphics stack consists of multiple layers:
 
